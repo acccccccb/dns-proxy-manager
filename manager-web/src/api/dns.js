@@ -31,6 +31,14 @@ export const postServeLog = (data) => {
         noToken: false,
     });
 };
+export const postServeLogClear = (data) => {
+    return request({
+        url: '/admin/log/clear',
+        method: 'post',
+        data,
+        noToken: false,
+    });
+};
 export const postServeRestart = (data) => {
     return request({
         url: '/admin/restart',

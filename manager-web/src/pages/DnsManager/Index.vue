@@ -89,6 +89,7 @@
                 <n-card title="日志" :bordered="true" role="dialog" aria-modal="true">
                     <template #header-extra>
                         <n-space>
+                            <n-button type="default" @click="postServeLogClear()">清空日志</n-button>
                             <n-button type="default" @click="postServeLog()">刷新日志</n-button>
                         </n-space>
                     </template>
@@ -110,7 +111,7 @@
     import { defineComponent } from 'vue';
     import hljs from 'highlight.js/lib/core';
     import bash from 'highlight.js/lib/languages/bash';
-    import { getConfig, postConfigUpdate, postServeInfo, postServeLog, postServeStop, postServeStart, postServeRestart } from '../../api/dns.js';
+    import { getConfig, postConfigUpdate, postServeInfo, postServeLog, postServeStop, postServeStart, postServeRestart, postServeLogClear } from '../../api/dns.js';
     import EditForm from './EditForm.vue';
 
 export default defineComponent({
@@ -198,6 +199,13 @@ export default defineComponent({
                 this.$nextTick(() => {
                     this.$refs.logInstRef?.scrollTo({ position: 'bottom', slient: true });
                 });
+            });
+        },
+        postServeLogClear() {
+            this.logLoading = true;
+            postServeLogClear().then(res => {
+                this.logLoading = false;
+                this.postServeLog();
             });
         },
         postServeInfo() {

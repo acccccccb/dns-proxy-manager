@@ -212,6 +212,20 @@ router.post('/admin/log', async (ctx) => {
         };
     }
 });
+router.post('/admin/log/clear', async (ctx) => {
+    const res = await runCmd(`pm2 flush`);
+    if (res.status === 0) {
+        res.message = res.message.split(/\r?\n|(?<!\n)\r/);
+        ctx.body = res;
+    } else {
+        ctx.body = {
+            code: 200,
+            message: '查询失败',
+            status: 1,
+            data: res,
+        };
+    }
+});
 
 router.get('/admin/config', async (ctx) => {
     const config = await find_db('config', {});
