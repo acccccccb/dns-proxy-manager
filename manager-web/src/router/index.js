@@ -27,15 +27,6 @@ const routes = [
             title: '首页',
         },
         children: [
-            {
-                path: 'Home',
-                name: 'Home',
-                component: () => import('../pages/Home.vue'),
-                meta: {
-                    title: '首页',
-                    icon: 'Home',
-                },
-            },
             ...routeGenerater(),
         ],
     },

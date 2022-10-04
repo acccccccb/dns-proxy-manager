@@ -2,6 +2,7 @@
 node_modules
 /dist
 /manager-serve/db/**/*
+/manager-web/dist
 # local env files
 .env.local
 .env.*.local
@@ -19,3 +20,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw*
+
+/readme.md
+/readmedist
