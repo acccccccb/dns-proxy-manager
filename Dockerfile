@@ -13,7 +13,7 @@ RUN npm config set registry https://mirrors.cloud.tencent.com/npm/ && \
     npm run build
 # pord
 FROM alpine:3.14 as prod
-EXPOSE 3000 3001 53
+EXPOSE 3000 3001 53/udp
 RUN echo http://mirrors.aliyun.com/alpine/v3.14/main/ > /etc/apk/repositories && \
     echo http://mirrors.aliyun.com/alpine/v3.14/community/ >> /etc/apk/repositories && \
     echo 'http://dl-cdn.alpinelinux.org/alpine/v3.9/main' >> /etc/apk/repositories && \

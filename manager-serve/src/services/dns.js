@@ -7,7 +7,7 @@ const { Packet, UDPClient } = dns2;
 let _PORT = 53;
 let _FALLBACK_TIMEOUT = 350;
 let _TYPE = 'udp4'; // IPv4 or IPv6 (Must be either "udp4" or "udp6")
-let _ADDRESS = '127.0.0.1';
+let _ADDRESS = '0.0.0.0';
 let _DNS_SERVER = ['223.5.5.5', '1.1.1.1', '114.114.114.114', '8.8.8.8', '8.8.4.4'];
 
 (async () => {
