@@ -3,7 +3,7 @@ const Engine = mongodb();
 // const ObjectId = mongodb.ObjectId;
 import moment from 'moment';
 import path from 'path';
-import MD5 from 'md5.js';
+import MD5 from 'md5';
 
 const conn = () => {
     const url = path.resolve('./') + '/src/db';
@@ -23,7 +23,7 @@ export const init_db = async () => {
             // 插入数据
             await db.collection('config').insert({
                 username: 'admin',
-                password: new MD5().update('42').digest('hex'),
+                password: MD5('123456'),
                 slot: '',
                 token: '',
                 external_dns: ['119.29.29.29', '223.5.5.5', '8.8.4.4'],
@@ -62,7 +62,6 @@ export const destroy_db = async () => {
         try {
             db.collection('config').drop(() => {});
             db.collection('proxy').drop(() => {});
-            db.collection('user').drop(() => {});
             connect.close();
             return {
                 success: true,
@@ -241,5 +240,4 @@ export const insert_collection = (collection_name, { domain, ip, remark, status 
         }
     });
 };
-
 export default mongodb;

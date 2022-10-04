@@ -4,6 +4,7 @@ import koa from 'koa';
 import cors from 'koa-cors';
 import koaBody from 'koa-body';
 import { find_db } from './utils/mongo.js';
+import JWT from './utils/jwt.js';
 import runCmd from './utils/runCmd.js';
 import path from 'path';
 // import './services/dns.js';
@@ -43,12 +44,26 @@ app.use(async (ctx, next) => {
     // 不在白名单的都要验证token
     if (whiteList.indexOf(ctx.path) === -1) {
         const token = ctx.header?.authorization?.replace('Bearer ', '') || null;
-        const auth = await find_db('config', { token: token });
-
-        if (Array.isArray(auth.data) && auth.data.length > 0) {
-            const authToken = auth.data[0].token;
-            if (token === authToken && token && authToken) {
-                await next();
+        const checkData = await JWT.checkToken(token);
+        if(!checkData) {
+            ctx.body = {
+                code: 200,
+                message: '你还没登陆',
+                status: 401,
+            };
+        } else {
+            const auth = await find_db('config', { token: checkData.data.token });
+            if (Array.isArray(auth.data) && auth.data.length > 0) {
+                const authToken = auth.data[0].token;
+                if (token === authToken && token && authToken) {
+                    await next();
+                } else {
+                    ctx.body = {
+                        code: 200,
+                        message: '你还没登陆',
+                        status: 401,
+                    };
+                }
             } else {
                 ctx.body = {
                     code: 200,
@@ -56,13 +71,8 @@ app.use(async (ctx, next) => {
                     status: 401,
                 };
             }
-        } else {
-            ctx.body = {
-                code: 200,
-                message: '你还没登陆',
-                status: 401,
-            };
         }
+
     } else {
         await next();
     }

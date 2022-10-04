@@ -33,6 +33,9 @@
                     }">
                         <n-input-number v-model:value="form.fallback_timeout" :min="0" :max="30000" />
                     </n-form-item>
+                    <n-form-item path="password" label="password" >
+                        <n-input v-model:value="form.password" placeholder="不修改请留空"/>
+                    </n-form-item>
                     <n-form-item path="external_dns" label="external_dns" :rule="{
                         type: 'any',
                         required: true,
@@ -77,6 +80,7 @@
                     fallback_timeout: null,
                     port: null,
                     type: null,
+                    password: null,
                 },
             };
         },
@@ -88,6 +92,7 @@
                     fallback_timeout: null,
                     port: null,
                     type: null,
+                    password: null,
                 };
             },
             show() {

@@ -1,8 +1,9 @@
-import Mock from 'mockjs';
 import Router from 'koa-router';
-import MD5 from 'md5.js';
+import MD5 from 'md5';
 import runCmd from '../utils/runCmd.js';
+import JWT from '../utils/jwt.js';
 import path from 'path';
+
 import {
     init_db,
     destroy_db,
@@ -14,7 +15,6 @@ import {
 import multer from '@koa/multer';
 import fs from 'fs-extra';
 import moment from 'moment';
-
 const pm2ProcessName = 'DnsProxyServe';
 
 const upload = multer();
@@ -39,26 +39,33 @@ router.get('/check', async (ctx) => {
 });
 
 router.post('/install', async (ctx) => {
-    const params = ctx.request.body;
-
-    const res = await init_db();
-    console.log('createCollection', res);
-    const pm2ProcessName = 'DnsProxyServe';
-    const file = path.resolve('.') + '\\src\\services\\dns.js';
-    await runCmd(`pm2 stop ${pm2ProcessName}`);
-    await runCmd(`pm2 start ${file} --name ${pm2ProcessName}`);
-    if (res.success === true) {
+    const loginData = await find_db('config', {});
+    if (Array.isArray(loginData.data) && loginData.data.length > 0) {
         ctx.body = {
             code: 200,
-            message: '安装成功',
+            message: '已初始化数据库',
             status: 0,
         };
     } else {
-        ctx.body = {
-            code: 200,
-            message: res.message.toString(),
-            status: 0,
-        };
+        const params = ctx.request.body;
+        const res = await init_db();
+        console.log('createCollection', res);
+        const pm2ProcessName = 'DnsProxyServe';
+        const file = path.resolve('.') + '/src/services/dns.js';
+        await runCmd(`pm2 start ${file} --name ${pm2ProcessName}`);
+        if (res.success === true) {
+            ctx.body = {
+                code: 200,
+                message: '安装成功',
+                status: 0,
+            };
+        } else {
+            ctx.body = {
+                code: 200,
+                message: res.message.toString(),
+                status: 0,
+            };
+        }
     }
 });
 router.post('/uninstall', async (ctx) => {
@@ -84,23 +91,39 @@ router.post('/uninstall', async (ctx) => {
 router.post('/admin/login', async (ctx) => {
     const params = ctx.request.body;
     const username = params.phone;
-    const password = new MD5(params.password).update('42').digest('hex');
-    const loginData = await find_db('config', {});
+    const password = MD5(params.password);
+
+    console.log('username', username);
+    console.log('password', password);
+    const loginData = await find_db('config', { username, password });
     if (Array.isArray(loginData.data) && loginData.data.length > 0) {
         const uname = loginData.data[0].username;
         const passwd = loginData.data[0].password;
-        const token = new MD5().update('42').digest('hex');
-        loginData.data[0].token = token;
+        const id = loginData.data[0]._id.id;
+        const newData = loginData.data[0];
+        delete newData.token;
+        const token = JWT.createToken(newData);
+        newData.token = token;
+        delete newData._id;
+        // console.log(loginData.data[0]);
         if (uname === username && password === passwd) {
-            await update_collection('config', { username, password }, loginData.data[0]);
-            ctx.body = {
-                code: 200,
-                message: '登录成功',
-                status: 0,
-                data: {
-                    token,
-                },
-            };
+            const updateResult = await update_collection('config', { _id: id }, newData);
+            if(updateResult.success === true) {
+                ctx.body = {
+                    code: 200,
+                    message: '登录成功',
+                    status: 0,
+                    data: {
+                        token,
+                    },
+                };
+            } else {
+                ctx.body = {
+                    code: 200,
+                    message: '登录失败',
+                    status: 1,
+                };
+            }
         } else {
             ctx.body = {
                 code: 200,
@@ -252,6 +275,18 @@ router.get('/admin/config', async (ctx) => {
 
 router.post('/admin/config/update', async (ctx) => {
     const params = ctx.request.body;
+
+    delete params.username;
+    delete params.slot;
+    delete params.token;
+
+    if(params.password) {
+        params.password = MD5(params.password);
+        params.token = '';
+    } else {
+        delete params.password;
+    }
+
     const updateResult = await update_collection('config', { _id: params._id }, params);
     if (updateResult.success) {
         ctx.body = {

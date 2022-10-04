@@ -4,8 +4,12 @@
             <n-card title="服务配置" :bordered="true" role="dialog" aria-modal="true">
                 <template #header-extra>
                     <n-space v-if="form">
-                        <n-button type="default" @click="showOptionsModal()">设置</n-button>
-                        <n-button block type="error" @click="uninstall"> 停止服务并销毁数据库 </n-button>
+                        <n-button type="primary" @click="showOptionsModal()">设置</n-button>
+                        <n-button type="default" quaternary @click="uninstall"> 
+                            <template #icon>
+                                <IconRender :size="16" name="Trash"></IconRender>
+                            </template>
+                        </n-button>
                     </n-space>
                 </template>
                 <n-descriptions :column="4" label-placement="left" v-if="form">
@@ -113,7 +117,7 @@
     import bash from 'highlight.js/lib/languages/bash';
     import { getConfig, postConfigUpdate, postServeInfo, postServeLog, postServeStop, postServeStart, postServeRestart, postServeLogClear } from '../../api/dns.js';
     import EditForm from './EditForm.vue';
-
+    import IconRender from '../../components/Modules/IconRender.vue';
 export default defineComponent({
     name: 'DnsManager',
     setup() {
@@ -123,7 +127,8 @@ export default defineComponent({
         };
     },
     components: {
-        EditForm
+        EditForm,
+        IconRender
     },
     data() {
         return {
