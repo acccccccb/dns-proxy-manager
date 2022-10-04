@@ -3,7 +3,7 @@ import axios from 'axios';
 const request = (config) => {
     const $axios = axios.create({
         // API 请求的默认前缀
-        baseURL: 'http://localhost:3001',
+        baseURL: 'http://localhost:8053',
         timeout: 30000, // 请求超时时间
         validateStatus: (status) => {
             return status < 500; // 处理状态码小于500的情况
