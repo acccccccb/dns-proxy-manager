@@ -13,6 +13,12 @@ vite + vue3
 - 进程管理：pm2
 - 仓库地址： [https://github.com/acccccccb/dns-proxy-manager](https://github.com/acccccccb/dns-proxy-manager)
 
+# Docker
+
+```bash
+docker build --pull --rm -f "Dockerfile" -t dnsproxymanager:latest "."
+```
+
 # 开发
 
 ## web端
@@ -22,7 +28,6 @@ cd ./manager-web
 npm i
 npm run dev
 ```
-
 
 ## serve端
 
