@@ -15,8 +15,29 @@ vite + vue3
 
 # Docker
 
+## docker build
+
 ```bash
-docker build --pull --rm -f "Dockerfile" -t dnsproxymanager:latest "."
+docker build --pull --rm -f "Dockerfile" -t tabzhang001/dnsproxymanager:latest "."
+```
+
+or
+
+## docker pull
+
+```bash
+docker pull tabzhang001/dnsproxymanager:latest"
+```
+
+## docker run
+
+```bash
+docker run --name dnsproxymanager -d  \
+    -p 3000:3000 \
+    -p 8053:8053 \
+    -p 53:53/udp \
+    -v /path/to/db:/app/manager-serve/src/db \
+    tabzhang001/dnsproxymanager:latest
 ```
 
 # 开发
