@@ -13,7 +13,7 @@ vite + vue3
 - 进程管理：pm2
 - 仓库地址： [https://github.com/acccccccb/dns-proxy-manager](https://github.com/acccccccb/dns-proxy-manager)
 
-# Docker
+# 使用Docker部署
 
 ## docker build
 
@@ -39,6 +39,15 @@ docker run --name dnsproxymanager -d  \
     -v /path/to/db:/app/manager-serve/src/db \
     tabzhang001/dnsproxymanager:latest
 ```
+
+如果启动成功，即可进入管理页面：http://localhost:8083/
+
+默认用户名：admin
+默认密码：123456
+
+## 修改本机的dns地址
+
+修改本机的dns，将首选dns修改为127.0.0.1
 
 # 开发
 
